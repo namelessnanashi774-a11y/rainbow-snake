@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>七色レインボースネーク100 — v1.23</title>
+<title>七色レインボースネーク100 — v1.24</title>
 <style>
 :root{color-scheme:dark;--panel:rgba(255,255,255,.07);--line:rgba(255,255,255,.12)}
 *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;overscroll-behavior:none;position:fixed;inset:0}body{min-height:100%;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans JP",sans-serif;color:#fff;background:#020617;overflow:hidden;touch-action:pan-x pan-y}body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;background:radial-gradient(circle at 18% 18%,#7c3aed 0,transparent 28%),radial-gradient(circle at 82% 25%,#0891b2 0,transparent 25%),radial-gradient(circle at 50% 92%,#db2777 0,transparent 30%)}
@@ -67,7 +67,7 @@ if(activeMs>=nextEnemySpawnAt){if(enemies.length<50){const enemy=free();if(enemy
 for(const en of enemies){if(activeMs>=en.nextMoveAt){const opts=[[1,0],[-1,0],[0,1],[0,-1]].sort(()=>Math.random()-.5);for(const [dx,dy] of opts){const nx=en.x+dx,ny=en.y+dy;if(nx<=0||ny<=0||nx>=N-1||ny>=N-1)continue;if(snake.some(p=>p.x===nx&&p.y===ny)||enemies.some(other=>other!==en&&other.x===nx&&other.y===ny)||(food&&food.x===nx&&food.y===ny)||(rainbow&&rainbow.x===nx&&rainbow.y===ny))continue;en.x=nx;en.y=ny;break}en.nextMoveAt=activeMs+1600+Math.random()*800}}
 if(activeMs>=nextRainbowCheckAt){if(!rainbow){const guaranteed=rainbowMisses>=2;if(guaranteed||Math.random()<.30){const fruit=free();if(fruit){rainbow={...fruit,spawnedAt:activeMs};rainbowMisses=0}}else{rainbowMisses++}}nextRainbowCheckAt+=10000}
 if(rainbow){const age=activeMs-rainbow.spawnedAt;if(age>=10000)rainbow=null}
-draw();timer=setTimeout(tick,Math.max(140,220-Math.floor(snake.length/25)*20))}
+draw();const snakeSpeed=snake.length<30?250:snake.length<50?230:snake.length<80?210:190;timer=setTimeout(tick,snakeSpeed)}
 function draw(){let s=c.width/N;x.fillStyle='#020617';x.fillRect(0,0,c.width,c.height);x.strokeStyle='rgba(255,255,255,.045)';for(let i=1;i<N;i++){x.beginPath();x.moveTo(i*s,0);x.lineTo(i*s,c.height);x.stroke();x.beginPath();x.moveTo(0,i*s);x.lineTo(c.width,i*s);x.stroke()}
 function apple(p,colors,glow=12,isRainbow=false){if(!p)return;const cx=(p.x+.5)*s,cy=(p.y+.53)*s,r=s*.29;x.save();x.shadowColor=colors[0];x.shadowBlur=glow;const grad=x.createLinearGradient(cx-r,cy-r,cx+r,cy+r);colors.forEach((col,i)=>grad.addColorStop(i/Math.max(1,colors.length-1),col));x.fillStyle=grad;x.beginPath();x.moveTo(cx,cy-r*.48);x.bezierCurveTo(cx-r*.12,cy-r*1.18,cx-r*.82,cy-r*.92,cx-r*.9,cy-r*.25);x.bezierCurveTo(cx-r*1.05,cy+r*.42,cx-r*.48,cy+r*.94,cx,cy+r*.88);x.bezierCurveTo(cx+r*.48,cy+r*.94,cx+r*1.05,cy+r*.42,cx+r*.9,cy-r*.25);x.bezierCurveTo(cx+r*.82,cy-r*.92,cx+r*.12,cy-r*1.18,cx,cy-r*.48);x.closePath();x.fill();x.shadowBlur=0;x.strokeStyle='rgba(255,255,255,.48)';x.lineWidth=s*.025;x.stroke();x.strokeStyle='#854d0e';x.lineWidth=s*.055;x.lineCap='round';x.beginPath();x.moveTo(cx,cy-r*.68);x.quadraticCurveTo(cx+s*.02,cy-r*1.05,cx+s*.12,cy-r*1.12);x.stroke();x.fillStyle=isRainbow?'#4ade80':'#65a30d';x.beginPath();x.ellipse(cx+s*.17,cy-r*.93,s*.13,s*.065,-.45,0,Math.PI*2);x.fill();x.fillStyle='rgba(255,255,255,.72)';x.beginPath();x.ellipse(cx-r*.42,cy-r*.23,s*.045,s*.09,-.35,0,Math.PI*2);x.fill();x.restore()}
 apple(food,['#ef4444','#b91c1c','#fb7185'],15,false);
